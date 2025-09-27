@@ -1,11 +1,14 @@
 import { Photo } from '@/types/photo';
-import samplePhoto1 from '@/assets/sample-photo-1.jpg';
-import samplePhoto2 from '@/assets/sample-photo-2.jpg';
-import samplePhoto3 from '@/assets/sample-photo-3.jpg';
-import samplePhoto4 from '@/assets/sample-photo-4.jpg';
+
+// Используем placeholder изображения для демонстрации
+const sampleImages = [
+  'https://picsum.photos/400/300?random=1',
+  'https://picsum.photos/400/300?random=2', 
+  'https://picsum.photos/400/300?random=3',
+  'https://picsum.photos/400/300?random=4'
+];
 
 const mockPhotos: Photo[] = Array.from({ length: 1000 }, (_, index) => {
-  const sampleImages = [samplePhoto1, samplePhoto2, samplePhoto3, samplePhoto4];
   const sampleImage = sampleImages[index % 4];
   
   const sampleCaptions = [
