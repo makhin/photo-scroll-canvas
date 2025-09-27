@@ -235,7 +235,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
       >
         <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
           {/* Table Header */}
-          <div className="sticky top-0 z-10 bg-card border-b border-border shadow-sm">
+          <div className="sticky top-0 z-10 bg-card border-b border-border shadow-sm h-[52px]">
             {table.getHeaderGroups().map((headerGroup) => (
               <div key={headerGroup.id} className="flex">
                 {headerGroup.headers.map((header) => (
@@ -269,29 +269,31 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
 
           {/* Virtualized Rows */}
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const row = rows[virtualRow.index];
-            return (
-              <div
-                key={row.id}
-                className="absolute top-0 left-0 w-full flex items-center border-b border-border hover:bg-gallery-hover transition-colors duration-150"
-                style={{
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <div
-                    key={cell.id}
-                    className="px-4 py-2 flex items-center shrink-0"
-                    style={{ width: cell.column.getSize() }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                ))}
-              </div>
-            );
-          })}
+          <div className="relative" style={{ paddingTop: '52px' }}>
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const row = rows[virtualRow.index];
+              return (
+                <div
+                  key={row.id}
+                  className="absolute top-0 left-0 w-full flex items-center border-b border-border hover:bg-gallery-hover transition-colors duration-150"
+                  style={{
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      className="px-4 py-2 flex items-center shrink-0"
+                      style={{ width: cell.column.getSize() }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
