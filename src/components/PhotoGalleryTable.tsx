@@ -241,7 +241,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
                 {headerGroup.headers.map((header) => (
                   <div
                     key={header.id}
-                    className="px-4 py-3 text-left relative group"
+                    className="px-4 py-3 text-left relative group shrink-0"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
@@ -283,7 +283,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
                 {row.getVisibleCells().map((cell) => (
                   <div
                     key={cell.id}
-                    className="px-4 py-2 flex items-center"
+                    className="px-4 py-2 flex items-center shrink-0"
                     style={{ width: cell.column.getSize() }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
