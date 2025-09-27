@@ -1,11 +1,21 @@
 import { Photo } from '@/types/photo';
 
-// Используем placeholder изображения для демонстрации
+// Создаем простые SVG placeholder'ы
+const createSVGPlaceholder = (color: string, text: string) => {
+  const svg = `
+    <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">
+      <rect width="50" height="50" fill="${color}"/>
+      <text x="25" y="25" font-family="Arial" font-size="10" fill="white" text-anchor="middle" dominant-baseline="middle">${text}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
+
 const sampleImages = [
-  'https://picsum.photos/400/300?random=1',
-  'https://picsum.photos/400/300?random=2', 
-  'https://picsum.photos/400/300?random=3',
-  'https://picsum.photos/400/300?random=4'
+  createSVGPlaceholder('#3B82F6', 'IMG1'),
+  createSVGPlaceholder('#EF4444', 'IMG2'), 
+  createSVGPlaceholder('#10B981', 'IMG3'),
+  createSVGPlaceholder('#F59E0B', 'IMG4')
 ];
 
 const mockPhotos: Photo[] = Array.from({ length: 1000 }, (_, index) => {
