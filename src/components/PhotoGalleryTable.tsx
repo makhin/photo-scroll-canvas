@@ -6,6 +6,7 @@ import {
   ColumnDef,
   flexRender,
   SortingState,
+  ColumnSizingState,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Photo } from '@/types/photo';
@@ -27,6 +28,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
   isLoading,
 }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const columns = useMemo<ColumnDef<Photo>[]>(
@@ -44,7 +46,10 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 80,
+        minSize: 60,
+        maxSize: 120,
         enableSorting: false,
+        enableResizing: true,
       },
       {
         accessorKey: 'path',
@@ -63,6 +68,9 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 250,
+        minSize: 150,
+        maxSize: 400,
+        enableResizing: true,
       },
       {
         accessorKey: 'caption',
@@ -81,6 +89,9 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 350,
+        minSize: 200,
+        maxSize: 500,
+        enableResizing: true,
       },
       {
         accessorKey: 'takenDate',
@@ -99,6 +110,9 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 150,
+        minSize: 120,
+        maxSize: 200,
+        enableResizing: true,
       },
       {
         accessorKey: 'tags',
@@ -113,7 +127,10 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 220,
+        minSize: 120,
+        maxSize: 300,
         enableSorting: false,
+        enableResizing: true,
       },
       {
         accessorKey: 'peoples',
@@ -128,7 +145,10 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 200,
+        minSize: 120,
+        maxSize: 280,
         enableSorting: false,
+        enableResizing: true,
       },
       {
         accessorKey: 'flags',
@@ -143,7 +163,10 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </div>
         ),
         size: 170,
+        minSize: 100,
+        maxSize: 250,
         enableSorting: false,
+        enableResizing: true,
       },
     ],
     []
@@ -154,10 +177,14 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
     columns,
     state: {
       sorting,
+      columnSizing,
     },
     onSortingChange: setSorting,
+    onColumnSizingChange: setColumnSizing,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
   });
 
   const { rows } = table.getRowModel();
@@ -214,7 +241,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
                 {headerGroup.headers.map((header) => (
                   <div
                     key={header.id}
-                    className="px-4 py-3 text-left"
+                    className="px-4 py-3 text-left relative group"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
@@ -223,6 +250,18 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                    {header.column.getCanResize() && (
+                      <div
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                        className="absolute right-0 top-0 h-full w-1 bg-border hover:bg-primary cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{
+                          transform: header.column.getIsResizing()
+                            ? 'scaleX(1.5)'
+                            : '',
+                        }}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
