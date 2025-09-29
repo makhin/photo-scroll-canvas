@@ -45,11 +45,9 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
             />
           </div>
         ),
-        size: 80,
-        minSize: 60,
-        maxSize: 120,
+        size: 80, // Fixed size for thumbnails
         enableSorting: false,
-        enableResizing: true,
+        enableResizing: false,
       },
       {
         accessorKey: 'path',
@@ -63,13 +61,11 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </button>
         ),
         cell: ({ getValue }) => (
-          <div className="font-mono text-sm text-muted-foreground truncate max-w-[200px]">
+          <div className="font-mono text-sm text-muted-foreground truncate">
             {getValue() as string}
           </div>
         ),
-        size: 250,
-        minSize: 150,
-        maxSize: 400,
+        // 20% of available width
         enableResizing: true,
       },
       {
@@ -84,13 +80,11 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </button>
         ),
         cell: ({ getValue }) => (
-          <div className="text-sm text-foreground max-w-[300px] truncate">
+          <div className="text-sm text-foreground truncate">
             {getValue() as string}
           </div>
         ),
-        size: 350,
-        minSize: 200,
-        maxSize: 500,
+        // 30% of available width
         enableResizing: true,
       },
       {
@@ -105,20 +99,18 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           </button>
         ),
         cell: ({ getValue }) => (
-          <div className="text-sm text-muted-foreground font-mono">
+          <div className="text-sm text-muted-foreground font-mono whitespace-nowrap">
             {format(getValue() as Date, 'dd.MM.yyyy HH:mm')}
           </div>
         ),
-        size: 150,
-        minSize: 120,
-        maxSize: 200,
+        size: 150, // Fixed size for dates
         enableResizing: true,
       },
       {
         accessorKey: 'tags',
         header: 'Tags',
         cell: ({ getValue }) => (
-          <div className="flex flex-wrap gap-1 max-w-[200px]">
+          <div className="flex flex-wrap gap-1">
             {(getValue() as string[]).map((tag, index) => (
               <BadgeTag key={index} variant="default" className="text-xs">
                 {tag}
@@ -126,9 +118,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
             ))}
           </div>
         ),
-        size: 220,
-        minSize: 120,
-        maxSize: 300,
+        // 18% of available width
         enableSorting: false,
         enableResizing: true,
       },
@@ -136,7 +126,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
         accessorKey: 'peoples',
         header: 'People',
         cell: ({ getValue }) => (
-          <div className="flex flex-wrap gap-1 max-w-[180px]">
+          <div className="flex flex-wrap gap-1">
             {(getValue() as string[]).map((person, index) => (
               <BadgeTag key={index} variant="secondary" className="text-xs">
                 {person}
@@ -144,9 +134,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
             ))}
           </div>
         ),
-        size: 200,
-        minSize: 120,
-        maxSize: 280,
+        // 16% of available width
         enableSorting: false,
         enableResizing: true,
       },
@@ -154,7 +142,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
         accessorKey: 'flags',
         header: 'Flags',
         cell: ({ getValue }) => (
-          <div className="flex flex-wrap gap-1 max-w-[150px]">
+          <div className="flex flex-wrap gap-1">
             {(getValue() as string[]).map((flag, index) => (
               <BadgeTag key={index} variant="outline" className="text-xs">
                 {flag}
@@ -162,9 +150,7 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
             ))}
           </div>
         ),
-        size: 170,
-        minSize: 100,
-        maxSize: 250,
+        // 16% of available width
         enableSorting: false,
         enableResizing: true,
       },
@@ -237,33 +223,51 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
           {/* Table Header */}
           <div className="sticky top-0 z-10 bg-card border-b border-border shadow-sm h-[52px]">
             {table.getHeaderGroups().map((headerGroup) => (
-              <div key={headerGroup.id} className="flex">
-                {headerGroup.headers.map((header) => (
-                  <div
-                    key={header.id}
-                    className="px-4 py-3 text-left relative group shrink-0"
-                    style={{ width: header.getSize() }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {header.column.getCanResize() && (
-                      <div
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        className="absolute right-0 top-0 h-full w-1 bg-border hover:bg-primary cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{
-                          transform: header.column.getIsResizing()
-                            ? 'scaleX(1.5)'
-                            : '',
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
+              <div key={headerGroup.id} className="flex w-full">
+                {headerGroup.headers.map((header, index) => {
+                  // Calculate flex basis based on column type
+                  let flexStyle = {};
+                  const columnId = header.column.id;
+                  
+                  if (columnId === 'thumbnail') {
+                    flexStyle = { flexBasis: '80px', flexShrink: 0 };
+                  } else if (columnId === 'takenDate') {
+                    flexStyle = { flexBasis: '150px', flexShrink: 0 };
+                  } else if (columnId === 'path') {
+                    flexStyle = { flex: '2 1 0%' }; // 20% flexible
+                  } else if (columnId === 'caption') {
+                    flexStyle = { flex: '3 1 0%' }; // 30% flexible
+                  } else {
+                    flexStyle = { flex: '1.5 1 0%' }; // 15% flexible each
+                  }
+                  
+                  return (
+                    <div
+                      key={header.id}
+                      className="px-4 py-3 text-left relative group"
+                      style={flexStyle}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      {header.column.getCanResize() && (
+                        <div
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                          className="absolute right-0 top-0 h-full w-1 bg-border hover:bg-primary cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity"
+                          style={{
+                            transform: header.column.getIsResizing()
+                              ? 'scaleX(1.5)'
+                              : '',
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
@@ -281,15 +285,33 @@ export const PhotoGalleryTable: React.FC<PhotoGalleryTableProps> = ({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <div
-                      key={cell.id}
-                      className="px-4 py-2 flex items-center shrink-0"
-                      style={{ width: cell.column.getSize() }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </div>
-                  ))}
+                  {row.getVisibleCells().map((cell, index) => {
+                    // Calculate flex basis based on column type
+                    let flexStyle = {};
+                    const columnId = cell.column.id;
+                    
+                    if (columnId === 'thumbnail') {
+                      flexStyle = { flexBasis: '80px', flexShrink: 0 };
+                    } else if (columnId === 'takenDate') {
+                      flexStyle = { flexBasis: '150px', flexShrink: 0 };
+                    } else if (columnId === 'path') {
+                      flexStyle = { flex: '2 1 0%' }; // 20% flexible
+                    } else if (columnId === 'caption') {
+                      flexStyle = { flex: '3 1 0%' }; // 30% flexible
+                    } else {
+                      flexStyle = { flex: '1.5 1 0%' }; // 15% flexible each
+                    }
+                    
+                    return (
+                      <div
+                        key={cell.id}
+                        className="px-4 py-2 flex items-center"
+                        style={flexStyle}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })}
